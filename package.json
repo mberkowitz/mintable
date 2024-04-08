@@ -10,7 +10,10 @@
         "watch": "tsc --watch",
         "lint": "prettier --check ./src/**/*.js ./src/**/*.html ./src/**/*.ts ./docs/**/*.json",
         "lint-fix": "prettier --write ./src/**/*.js ./src/**/*.html ./src/**/*.ts ./docs/**/*.json",
-        "test": "npm run build && npm run lint"
+        "test": "npm run build && npm run lint",
+        "start": "node lib/scripts/cli.js",
+        "debug": "node --inspect --require ts-node/register src/scripts/cli.ts",
+        "debug:brk": "node --inspect-brk --require ts-node/register src/scripts/cli.ts"
     },
     "files": [
         "src",
@@ -40,6 +43,7 @@
         "open": "^7.0.2",
         "plaid": "^7.0.0",
         "prompts": "^2.3.1",
+        "ts-node": "^10.9.2",
         "typescript": "3.8.3",
         "typescript-json-schema": "^0.42.0",
         "yargs": "^15.1.0"

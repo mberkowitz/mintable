@@ -1,4 +1,5 @@
 {
+    "sourceMap" : true,
     "compilerOptions": {
         "lib": ["es2019"],
         "esModuleInterop": true,

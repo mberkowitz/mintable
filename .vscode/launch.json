@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "smartStep": true,
+            "skipFiles": [
+                "<node_internals>/**/*.js",
+                "${workspaceFolder}/node_modules/**/*.js",
+                "${workspaceFolder}/lib/**/*.js"
+            ],
+        },
+        {
+            "name": "Launch Program",
+            "type": "node",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "smartStep": true,
+            "skipFiles": [
+                "<node_internals>/**/*.js",
+                "${workspaceFolder}/node_modules/**/*.js",
+                "${workspaceFolder}/lib/**/*.js"
+            ],
+            "runtimeExecutable": "/usr/local/bin/node",
+            "program": "${workspaceFolder}/src/scripts/cli.ts",
+            "outFiles": [
+                "${workspaceFolder}/lib/**/*.js"
+            ]
+        }
+    ]
+}
