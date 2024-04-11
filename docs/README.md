@@ -91,55 +91,49 @@ Mintable simplifies managing your finances, for free, without ads, and without t
 
 ## Importing Account Balances & Transactions
 
-### Automatically – in the cloud – via [Plaid](https://plaid.com)
+### Automatically – in the cloud – via [Plaid](https://plaid.com) or [Teller](https://teller.io)
 
-You can run:
+This setup will allow you to automatically fetch updated account
+balances/transactions from your banking institutions every time `mintable fetch` is run. 
+First you must register your Plaid or Teller credentials,
+and then you must register each account.
 
+If you have a Plaid account, you can run:
 ```bash
-mintable plaid-setup
+mintable setup plaid
+```
+to enter the Plaid setup wizard.
+
+Or, if you have a Teller account, you can run:
+```bash
+mintable setup teller
+```
+to enter the Teller setup wizard.
+This will ask for things like the certificate, private key, and application ID provided when you signed up for Teller.
+
+You can setup both, running
+```bash
+mintable setup plaid
+mintable setup teller
+```
+or even in one go
+```bash
+mintable setup plaid teller
 ```
 
-to enter the Plaid setup wizard. This will allow you to automatically fetch updated account balances/transactions from your banking institutions every time `mintable fetch` is run.
-
-After you have the base Plaid integration working, you can run:
+After you have the base Plaid and/or Teller integrations working, you can run:
 
 ```bash
-mintable account-setup
+mintable setup accounts
 ```
+to enter the account setup wizard to add, update, or remove accounts from whatever data sources you have configured.
 
-to enter the account setup wizard to add, update, or remove accounts.
+This step will launch a local web server (necessary to authenticate with Plaid and/or Teller's servers) 
+for you to connect your banks.
 
 ![Account Setup](./img/account-setup.png)
 
-This will launch a local web server (necessary to authenticate with Plaid's servers) for you to connect your banks.
-
 To add a new account, click the blue **Link A New Account** button. To re-authenticate with an existing account, click the blue **Update** button next to the account name in the table.
-
-> **Note:** Plaid is the default import integration and these steps are not necessary if you've already run `mintable setup`.
-
-### Automatically via [Teller](https://teller.io)
-
-You can run:
-
-```bash
-mintable teller-setup
-```
-
-to enter the Teller setup wizard. This will ask for things like the certificate, private key, and application ID provided when you sign up for Teller.
-
-After you have the base Teller integration working, you can run:
-
-```bash
-mintable teller-account-setup
-```
-
-to enter the account setup wizard to add or remove accounts.
-
-This will launch a local web server (necessary to authenticate with Teller's servers) for you to connect your banks.
-
-To add a new account, click the blue **Link A New Account** button.
-
-> **Note:** Access to an account may expire. In that case, you should run `mintable teller-account-setup` to re-add the accounts with expired access.
 
 After set up is complete, you will import updated account balances/transactions from your banking institutions every time `mintable fetch` is run.
 
@@ -148,7 +142,7 @@ After set up is complete, you will import updated account balances/transactions 
 You can run:
 
 ```bash
-mintable csv-import-setup
+mintable setup from-csv
 ```
 
 to enter the CSV import setup wizard. This will allow you to manually import files or globs (`path/to/my/folder/transactions/*.csv`) every time `mintable fetch` is run.
@@ -177,7 +171,7 @@ These templates can be added into the `accounts` section of your `mintable.jsonc
 You can run:
 
 ```bash
-mintable google-setup
+mintable setup google
 ```
 
 to enter the Google Sheets setup wizard. This will allow you to automatically update a sheet with your transactions/account balances every time `mintable fetch` is run.
@@ -189,7 +183,7 @@ to enter the Google Sheets setup wizard. This will allow you to automatically up
 You can run:
 
 ```bash
-mintable csv-export-setup
+mintable setup to-csv
 ```
 
 to enter the CSV export setup wizard. This will allow you to manually export a CSV containing your transactions/account balances every time `mintable fetch` is run.
