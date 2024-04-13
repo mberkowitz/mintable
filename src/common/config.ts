@@ -65,16 +65,14 @@ export const getConfigSource = (): ConfigSource => {
     return { type: 'file', path: path }
 }
 
-export const readConfig = (source: ConfigSource, checkExists?: boolean): string => {
+export const readConfig = (source: ConfigSource, mustExist: boolean): string => {
     if (source.type === 'file') {
         try {
             const config = fs.readFileSync(source.path, 'utf8')
             logInfo('Successfully opened configuration file.')
             return config
         } catch (e) {
-            if (checkExists) {
-                logInfo('Unable to open config file.')
-            } else {
+            if (mustExist) {
                 logError('Unable to open configuration file.', e)
                 logInfo("You may want to run `mintable setup` (or `mintable migrate`) if you haven't already.")
             }
@@ -83,17 +81,13 @@ export const readConfig = (source: ConfigSource, checkExists?: boolean): string 
     if (source.type === 'environment') {
         try {
             const config = process.env[source.variable]
-
             if (config === undefined) {
                 throw `Variable \`${source.variable}\` not defined in environment.`
             }
-
             logInfo('Successfully retrieved configuration variable.')
             return config
         } catch (e) {
-            if (!checkExists) {
-                logInfo('Unable to read config variable from env.')
-            } else {
+            if (mustExist) {
                 logError('Unable to read config variable from env.', e)
             }
         }
@@ -148,7 +142,7 @@ export const validateConfig = (parsedConfig: Object): Config => {
         const valid = validator.validate(configSchema, parsedConfig)
 
         if (!valid) {
-            logError('Unable to validate configuration.', validator.errors)
+            logError('Invalid configuration.', validator.errors)
         }
     } catch (e) {
         logError('Unable to validate configuration.', e)
@@ -161,7 +155,7 @@ export const validateConfig = (parsedConfig: Object): Config => {
 
 export const getConfig = (): Config => {
     const configSource = getConfigSource()
-    const configString = readConfig(configSource)
+    const configString = readConfig(configSource, true)
     const parsedConfig = parseConfig(configString)
     const validatedConfig = validateConfig(parsedConfig)
     return validatedConfig
@@ -186,17 +180,19 @@ export const writeConfig = (source: ConfigSource, config: Config): void => {
 type ConfigTransformer = (oldConfig: Config) => Config
 
 export const updateConfig = (configTransformer: ConfigTransformer, initialize?: boolean): Config => {
-    let newConfig: Config
+    let oldConfig: Config
     const configSource = getConfigSource()
-
     if (initialize) {
-        newConfig = configTransformer(DEFAULT_CONFIG)
+        oldConfig = DEFAULT_CONFIG
     } else {
-        const configString = readConfig(configSource)
-        const oldConfig = parseConfig(configString) as Config
-        newConfig = configTransformer(oldConfig)
+        const configString = readConfig(configSource, false)
+        if (configString) {
+            oldConfig = parseConfig(configString) as Config
+        } else {
+            oldConfig = DEFAULT_CONFIG
+        }
     }
-
+    const newConfig: Config = configTransformer(oldConfig)
     const validatedConfig = validateConfig(newConfig)
     writeConfig(configSource, validatedConfig)
     return validatedConfig

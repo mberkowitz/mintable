@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 
-import prompts from 'prompts'
 const chalk = require('chalk')
-import { updateConfig, readConfig, getConfigSource } from '../common/config'
-import plaid from '../integrations/plaid/setup'
-import google from '../integrations/google/setup'
-import csvImport from '../integrations/csv-import/setup'
+import { updateConfig } from '../common/config'
 import csvExport from '../integrations/csv-export/setup'
-import teller from '../integrations/teller/setup'
+import csvImport from '../integrations/csv-import/setup'
+import google from '../integrations/google/setup'
 import plaidAccountSetup from '../integrations/plaid/accountSetup'
+import plaid from '../integrations/plaid/setup'
 import tellerAccountSetup from '../integrations/teller/accountSetup'
+import teller from '../integrations/teller/setup'
 import fetch from './fetch'
 import migrate from './migrate'
-import { logError } from '../common/logging'
 
 const usage = () => {
     console.log(`\nmintable v${require('../../package.json').version}`)
@@ -26,34 +24,19 @@ const usage = () => {
     console.log('A bare "mintable setup" means "mintable setup default"')
 }
 
-const newConfig = async () => {
-    // CHECK what this actually does
-    const configSource = getConfigSource()
-    if (readConfig(configSource, true)) {
-        const overwrite = await prompts([
-            {
-                type: 'confirm',
-                name: 'confirm',
-                message: 'Config already exists. Do you to overwrite it?',
-                initial: false
-            }
-        ])
-        if (overwrite.confirm === false) {
-            logError('Config update cancelled by user.')
-        }
-    }
-    updateConfig(config => config, true)
-}
-
 const addAccounts = async () => {
     // check config for plaid and teller
     await plaidAccountSetup()
     await tellerAccountSetup()
 }
 
+const resetConfig = async () => {
+    await updateConfig(config => config, true)
+}
+
 const defaultSetup = async () => {
     // same as: setup reset plaid google accounts
-    await newConfig()
+    await resetConfig()
     await plaid()
     await google()
     await addAccounts()
@@ -66,7 +49,7 @@ const setup = async (args: string[]) => {
         for (const arg of args) {
             switch (arg) {
                 case 'reset':
-                    await newConfig()
+                    await resetConfig()
                     break
                 case 'plaid':
                     await plaid()

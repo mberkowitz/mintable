@@ -17,7 +17,7 @@ export const getOldConfig = (): ConfigSource => {
 export default () => {
     try {
         const oldConfigSource = getOldConfig()
-        const oldConfigString = readConfig(oldConfigSource)
+        const oldConfigString = readConfig(oldConfigSource, true)
         let oldConfig = parseConfig(oldConfigString)
 
         const deprecatedProperties = ['HOST', 'PORT', 'CATEGORY_OVERRIDES', 'DEBUG', 'CREATE_BALANCES_SHEET', 'DEBUG']
